@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 public class UserMealsUtil {
@@ -61,6 +61,6 @@ public class UserMealsUtil {
                         meal.getDescription(),
                         meal.getCalories(),
                         totalCaloriesPerDays.get(meal.getDateTime().toLocalDate()) > caloriesPerDay
-                )).collect(Collectors.toList());
+                )).collect(toList());
     }
 }
