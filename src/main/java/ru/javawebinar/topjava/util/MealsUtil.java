@@ -15,11 +15,11 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 public class MealsUtil {
-    private static final List<Meal> MEAL_LIST;
+    private static final List<Meal> mealList;
     private static final int CALORIES_PER_DAY = 2000;
 
     static {
-        MEAL_LIST = Arrays.asList(
+        mealList = Arrays.asList(
                 new Meal(1, LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
                 new Meal(2, LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000),
                 new Meal(3, LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500),
@@ -31,7 +31,7 @@ public class MealsUtil {
     }
 
     public static Map<Integer, Meal> getAll() {
-        return MEAL_LIST.stream()
+        return mealList.stream()
                 .collect(toMap(Meal::getId, meal -> new Meal(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories())));
     }
 

@@ -1,21 +1,16 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Igor
-  Date: 05.02.2024
-  Time: 21:23
-  To change this template use File | Settings | File Templates.
---%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="ru.javawebinar.topjava.util.TimeUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<c:set var="title" value="${meal.id == -1 ? 'Add' : 'Edit'}" />
 <html>
 <jsp:include page="/WEB-INF/jsp/ui/head.jsp">
-    <jsp:param name="title" value="Edit meals"/>
+    <jsp:param name="title" value="${title} meals"/>
 </jsp:include>
 <body>
 <jsp:include page="/WEB-INF/jsp/ui/header.jsp">
-    <jsp:param name="title" value="Edit meals"/>
+    <jsp:param name="title" value='${title} meals'/>
 </jsp:include>
-<form action="meals?action=<%= request.getParameter("action") %>" method="post">
+<form action="meals" method="post">
     <input type="hidden" name="id" value="${meal.id}">
     <label>
         <span>DateTime:</span> <input type="datetime-local" name="date_time" value="${TimeUtil.prepareTimeForJsp(meal.dateTime)}">
