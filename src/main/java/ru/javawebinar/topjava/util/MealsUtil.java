@@ -30,9 +30,8 @@ public class MealsUtil {
         );
     }
 
-    public static Map<Integer, Meal> getAll() {
-        return mealList.stream()
-                .collect(toMap(Meal::getId, meal -> new Meal(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories())));
+    public static List<Meal> getAll() {
+        return mealList;
     }
 
     public static List<MealTo> getMealToList(List<Meal> mealList) {

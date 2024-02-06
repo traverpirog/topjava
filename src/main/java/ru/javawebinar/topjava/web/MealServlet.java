@@ -1,8 +1,9 @@
 package ru.javawebinar.topjava.web;
 
-import ru.javawebinar.topjava.dao.MealCrudDAO;
-import ru.javawebinar.topjava.dao.MealCrudInMemoryImpl;
+import ru.javawebinar.topjava.dao.CrudDao;
+import ru.javawebinar.topjava.dao.InMemoryMealCrud;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.util.MealsUtil;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -13,11 +14,12 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class MealServlet extends HttpServlet {
-    private final MealCrudDAO mealCrud = new MealCrudInMemoryImpl();
+    private CrudDao<Meal> dao;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        dao = new InMemoryMealCrud();
     }
 
     @Override
@@ -25,25 +27,24 @@ public class MealServlet extends HttpServlet {
         String id = request.getParameter("id");
         String action = request.getParameter("action");
         if (action == null) {
-            request.setAttribute("meals", mealCrud.getAllMealTo());
+            request.setAttribute("meals", MealsUtil.getMealToList(dao.getAll()));
             request.getRequestDispatcher("/WEB-INF/jsp/meals.jsp").forward(request, response);
             return;
         }
         Meal meal;
         StringBuilder requestPath = new StringBuilder("/WEB-INF/jsp/");
         switch (action) {
-            case "delete":
-                mealCrud.delete(Integer.parseInt(id));
-                response.sendRedirect("meals");
-                return;
             case "create":
-                meal = new Meal(-1, LocalDateTime.now(), "", 0);
+                meal = new Meal();
                 break;
             case "update":
-                meal = mealCrud.get(Integer.parseInt(id));
+                meal = dao.get(Integer.parseInt(id));
                 break;
+            case "delete":
+                dao.delete(Integer.parseInt(id));
             default:
-                throw new IllegalArgumentException("Action " + action + " is illegal");
+                response.sendRedirect("meals");
+                return;
         }
         request.setAttribute("meal", meal);
         request.getRequestDispatcher(requestPath.append("edit_meal.jsp").toString()).forward(request, response);
@@ -56,11 +57,16 @@ public class MealServlet extends HttpServlet {
         String description = request.getParameter("description");
         int calories = Integer.parseInt(request.getParameter("calories"));
         String dateTime = request.getParameter("date_time");
-        Meal meal = new Meal(id, LocalDateTime.parse(dateTime), description, calories);
-        if (id == -1) {
-            mealCrud.create(meal);
+        Meal meal;
+        if (id == 0) {
+            meal = new Meal();
+            meal.setDateTime(LocalDateTime.parse(dateTime));
+            meal.setCalories(calories);
+            meal.setDescription(description);
+            dao.create(meal);
         } else {
-            mealCrud.update(meal);
+            meal = new Meal(id, LocalDateTime.parse(dateTime), description, calories);
+            dao.update(meal);
         }
         response.sendRedirect("meals");
     }
