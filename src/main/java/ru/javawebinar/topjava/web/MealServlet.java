@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.web;
 
-import org.slf4j.Logger;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.IdGenerator;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -15,12 +14,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Map;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
 public class MealServlet extends HttpServlet {
-    private static final Logger log = getLogger(MealServlet.class);
     private static final Map<Integer, Meal> MEALS = MealsUtil.getAll();
-    private static final IdGenerator generator = IdGenerator.getInstance();
+    private static final IdGenerator idGenerator = new IdGenerator(MEALS.size());
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -44,7 +40,7 @@ public class MealServlet extends HttpServlet {
                 response.sendRedirect("meals");
                 return;
             case "create":
-                meal = new Meal(generator.getNextUniqueIndex());
+                meal = new Meal(idGenerator.getNextUniqueIndex());
                 requestPath.append("edit");
                 break;
             case "update":
