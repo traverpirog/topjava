@@ -1,6 +1,6 @@
 package ru.javawebinar.topjava.web;
 
-import ru.javawebinar.topjava.dao.CrudDao;
+import ru.javawebinar.topjava.dao.Crud;
 import ru.javawebinar.topjava.dao.InMemoryMealCrud;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class MealServlet extends HttpServlet {
-    private CrudDao<Meal> dao;
+    private Crud<Meal> dao;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -27,7 +27,7 @@ public class MealServlet extends HttpServlet {
         String id = request.getParameter("id");
         String action = request.getParameter("action");
         if (action == null) {
-            request.setAttribute("meals", MealsUtil.getMealToList(dao.getAll()));
+            request.setAttribute("meals", MealsUtil.filteredByStreams(dao.getAll(), null, null, 2000));
             request.getRequestDispatcher("/WEB-INF/jsp/meals.jsp").forward(request, response);
             return;
         }
@@ -53,19 +53,19 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        int id = Integer.parseInt(request.getParameter("id"));
+        String id = request.getParameter("id");
         String description = request.getParameter("description");
         int calories = Integer.parseInt(request.getParameter("calories"));
         String dateTime = request.getParameter("date_time");
         Meal meal;
-        if (id == 0) {
+        if (id == null) {
             meal = new Meal();
             meal.setDateTime(LocalDateTime.parse(dateTime));
             meal.setCalories(calories);
             meal.setDescription(description);
             dao.create(meal);
         } else {
-            meal = new Meal(id, LocalDateTime.parse(dateTime), description, calories);
+            meal = new Meal(Integer.parseInt(id), LocalDateTime.parse(dateTime), description, calories);
             dao.update(meal);
         }
         response.sendRedirect("meals");

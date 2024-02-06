@@ -9,13 +9,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class InMemoryMealCrud implements CrudDao<Meal> {
-    private static final ConcurrentMap<Integer, Meal> meals = new ConcurrentHashMap<>();
-    private static final AtomicInteger counter = new AtomicInteger(1);
+public class InMemoryMealCrud implements Crud<Meal> {
+    private final ConcurrentMap<Integer, Meal> meals = new ConcurrentHashMap<>();
+    private final AtomicInteger counter = new AtomicInteger(1);
 
-    static {
-        InMemoryMealCrud dao = new InMemoryMealCrud();
-        MealsUtil.getAll().forEach(dao::create);
+    {
+        MealsUtil.getAll().forEach(this::create);
     }
 
     @Override
@@ -37,9 +36,7 @@ public class InMemoryMealCrud implements CrudDao<Meal> {
 
     @Override
     public void update(Meal meal) {
-        if (get(meal.getId()) != null) {
-            meals.put(meal.getId(), meal);
-        }
+        meals.replace(meal.getId(), meal);
     }
 
     @Override
