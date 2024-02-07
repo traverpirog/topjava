@@ -37,17 +37,7 @@ public class MealsUtil {
         Map<LocalDate, Integer> caloriesSumByDate = getCaloriesSumByDate(meals);
 
         return meals.stream()
-                .filter(meal -> {
-                    if (startTime != null && endTime != null) {
-                        return TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime);
-                    } else if (startTime != null) {
-                        return TimeUtil.isAtOrAfter(meal.getTime(), startTime);
-                    } else if (endTime != null) {
-                        return TimeUtil.isBefore(meal.getTime(), endTime);
-                    } else {
-                        return true;
-                    }
-                })
+                .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime))
                 .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
                 .collect(toList());
     }

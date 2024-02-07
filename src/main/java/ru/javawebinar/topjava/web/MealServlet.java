@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class MealServlet extends HttpServlet {
-    private final int caloriesPerDays = 2000;
+    private static final int CALORIES_PER_DAYS = 2000;
     private Crud<Meal> dao;
 
     @Override
@@ -28,7 +28,7 @@ public class MealServlet extends HttpServlet {
         String id = request.getParameter("id");
         String action = request.getParameter("action");
         if (action == null) {
-            request.setAttribute("meals", MealsUtil.filteredByStreams(dao.getAll(), null, null, caloriesPerDays));
+            request.setAttribute("meals", MealsUtil.filteredByStreams(dao.getAll(), null, null, CALORIES_PER_DAYS));
             request.getRequestDispatcher("/WEB-INF/jsp/meals.jsp").forward(request, response);
             return;
         }

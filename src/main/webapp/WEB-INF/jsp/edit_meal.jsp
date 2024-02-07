@@ -11,9 +11,11 @@
     <jsp:param name="title" value='${title} meals'/>
 </jsp:include>
 <form action="meals" method="post">
-    ${meal.id == null ? '' : '<input type="hidden" name="id" value="' + meal.id + '">'}
+    <c:if test="${meal.id != null}">
+        <input type="hidden" name="id" value="${meal.id}" />
+    </c:if>
     <label>
-        <span>DateTime:</span> <input type="datetime-local" name="date_time" value="${!empty meal.dateTime ? TimeUtil.prepareTimeForJsp(meal.dateTime) : ''}" />
+        <span>DateTime:</span> <input type="datetime-local" name="date_time" value="${TimeUtil.prepareTimeForJsp(meal.dateTime)}" />
     </label><br><br>
     <label>
         <span>Description:</span> <input type="text" name="description" value="${meal.description}"/>

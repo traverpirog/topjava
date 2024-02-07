@@ -8,18 +8,15 @@ public class TimeUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public static boolean isBetweenHalfOpen(LocalTime lt, LocalTime startTime, LocalTime endTime) {
-        return isAtOrAfter(lt, startTime) && isBefore(lt, endTime);
-    }
-
-    public static boolean isAtOrAfter(LocalTime lt, LocalTime time) {
-        return lt.compareTo(time) >= 0;
-    }
-
-    public static boolean isBefore(LocalTime lt, LocalTime time) {
-        return lt.compareTo(time) < 0;
+        boolean isBefore = endTime == null || lt.compareTo(endTime) < 0;
+        boolean isAtOrAfter = startTime == null || lt.compareTo(startTime) >= 0;
+        return isAtOrAfter && isBefore;
     }
 
     public static String prepareTimeForJsp(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return "";
+        }
         return DATE_TIME_FORMATTER.format(localDateTime);
     }
 }
