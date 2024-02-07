@@ -14,9 +14,6 @@ public class TimeUtil {
     }
 
     public static String prepareTimeForJsp(LocalDateTime localDateTime) {
-        if (localDateTime == null) {
-            return "";
-        }
-        return DATE_TIME_FORMATTER.format(localDateTime);
+        return localDateTime != null ? DATE_TIME_FORMATTER.format(localDateTime) : "";
     }
 }
