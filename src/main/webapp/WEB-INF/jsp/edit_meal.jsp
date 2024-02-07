@@ -16,10 +16,10 @@
         <span>DateTime:</span> <input type="datetime-local" name="date_time" value="${!empty meal.dateTime ? TimeUtil.prepareTimeForJsp(meal.dateTime) : ''}" />
     </label><br><br>
     <label>
-        <span>Description:</span> <input type="text" name="description" value="${!empty meal.description ? meal.description : ''}"/>
+        <span>Description:</span> <input type="text" name="description" value="${meal.description}"/>
     </label><br><br>
     <label>
-        <span>Calories:</span> <input type="number" name="calories" value="${!empty meal.calories ? meal.calories : ''}">
+        <span>Calories:</span> <input type="number" name="calories" value="${meal.calories}">
     </label><br><br>
     <button type="submit">Save</button> <button type="button" onclick="window.history.back()">Cancel</button>
 </form>
