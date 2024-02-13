@@ -23,6 +23,28 @@
     <h2>Meals</h2>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
+    <form action="meals" style="display: flex; gap: 24px; flex-wrap: wrap">
+        <label>
+            <span style="display: inline-block;margin-bottom: 8px;">От даты (включая)</span><br>
+            <input type="date" name="startDate">
+        </label>
+        <label>
+            <span style="display: inline-block;margin-bottom: 8px;">До даты (включая)</span><br>
+            <input type="date" name="endDate">
+        </label>
+        <label>
+            <span style="display: inline-block;margin-bottom: 8px;">От времени (включая)</span><br>
+            <input type="time" name="startTime">
+        </label>
+        <label>
+            <span style="display: inline-block;margin-bottom: 8px;">От времени (исключая)</span><br>
+            <input type="time" name="endTime">
+        </label>
+        <div style="width: 100%">
+            <input type="submit" value="Filter">
+        </div>
+    </form>
+    <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>
