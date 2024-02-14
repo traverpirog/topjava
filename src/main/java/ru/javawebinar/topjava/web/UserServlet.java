@@ -19,6 +19,8 @@ public class UserServlet extends HttpServlet {
         String selectedUser = request.getParameter("users");
         if (selectedUser != null) {
             SecurityUtil.setUserId(Integer.parseInt(selectedUser));
+            response.sendRedirect("meals");
+            return;
         }
         request.getRequestDispatcher("/users.jsp").forward(request, response);
     }

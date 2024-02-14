@@ -40,8 +40,4 @@ public class ValidationUtil {
             throw new IllegalArgumentException(entity + " must be with id=" + id);
         }
     }
-
-    public static boolean isAccessToMeal(int userId, int mealUserId) {
-        return userId == mealUserId;
-    }
 }

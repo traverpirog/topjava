@@ -31,7 +31,6 @@ public class MealServlet extends HttpServlet {
 
     @Override
     public void destroy() {
-        super.destroy();
         context.close();
     }
 
@@ -43,12 +42,14 @@ public class MealServlet extends HttpServlet {
         Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
-                Integer.parseInt(request.getParameter("calories")), SecurityUtil.authUserId());
+                Integer.parseInt(request.getParameter("calories")), null);
 
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        Meal newMeal = meal.isNew() ?
-                controller.create(meal) :
-                controller.update(meal, Integer.parseInt(id));
+        if (meal.isNew()) {
+            controller.create(meal);
+        } else {
+            controller.update(meal, Integer.parseInt(id));
+        }
         response.sendRedirect("meals");
     }
 
@@ -74,9 +75,27 @@ public class MealServlet extends HttpServlet {
             case "all":
             default:
                 log.info("getAll");
-                LocalDateTime startTime = prepareLocalDateTime(request, "startDate", "startTime", false);
-                LocalDateTime endTime = prepareLocalDateTime(request, "endDate", "endTime", true);
-                request.setAttribute("meals", controller.getAll(startTime, endTime));
+                String requestStartDate = request.getParameter("startDate");
+                String requestStartTime = request.getParameter("startTime");
+                String requestEndDate = request.getParameter("endDate");
+                String requestEndTime = request.getParameter("endTime");
+                LocalDate startDate = null;
+                LocalTime startTime = null;
+                LocalDate endDate = null;
+                LocalTime endTime = null;
+                if (requestStartDate != null && !requestStartDate.isEmpty()) {
+                    startDate = LocalDate.parse(requestStartDate);
+                }
+                if (requestStartTime != null && !requestStartTime.isEmpty()) {
+                    startTime = LocalTime.parse(requestStartTime);
+                }
+                if (requestEndDate != null && !requestEndDate.isEmpty()) {
+                    endDate = LocalDate.parse(requestEndDate);
+                }
+                if (requestEndTime != null && !requestEndTime.isEmpty()) {
+                    endTime = LocalTime.parse(requestEndTime);
+                }
+                request.setAttribute("meals", controller.getAllByDateTime(startDate, startTime, endDate, endTime));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
@@ -85,25 +104,5 @@ public class MealServlet extends HttpServlet {
     private int getId(HttpServletRequest request) {
         String paramId = Objects.requireNonNull(request.getParameter("id"));
         return Integer.parseInt(paramId);
-    }
-
-    private LocalDateTime prepareLocalDateTime(HttpServletRequest request, String dateParameter, String timeParameter, boolean isEnd) {
-        LocalDate date = LocalDate.MIN;
-        LocalTime time = LocalTime.MIN;
-        if (isEnd) {
-            date = LocalDate.MAX;
-            time = LocalTime.MAX;
-        }
-        String requestDate = request.getParameter(dateParameter);
-        String requestTime = request.getParameter(timeParameter);
-        if (requestDate != null && !requestDate.isEmpty()) {
-            date = LocalDate.parse(requestDate);
-        }
-        if (requestTime != null && !requestTime.isEmpty()) {
-            time = isEnd ?
-                    LocalTime.parse(requestTime).minusMinutes(1) :
-                    LocalTime.parse(requestTime);
-        }
-        return LocalDateTime.of(date, time);
     }
 }

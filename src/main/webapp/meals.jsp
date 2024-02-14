@@ -26,19 +26,19 @@
     <form action="meals" style="display: flex; gap: 24px; flex-wrap: wrap">
         <label>
             <span style="display: inline-block;margin-bottom: 8px;">От даты (включая)</span><br>
-            <input type="date" name="startDate">
+            <input type="date" name="startDate" value="${param.startDate}">
         </label>
         <label>
             <span style="display: inline-block;margin-bottom: 8px;">До даты (включая)</span><br>
-            <input type="date" name="endDate">
+            <input type="date" name="endDate" value="${param.endDate}">
         </label>
         <label>
             <span style="display: inline-block;margin-bottom: 8px;">От времени (включая)</span><br>
-            <input type="time" name="startTime">
+            <input type="time" name="startTime" value="${param.startTime}">
         </label>
         <label>
-            <span style="display: inline-block;margin-bottom: 8px;">От времени (исключая)</span><br>
-            <input type="time" name="endTime">
+            <span style="display: inline-block;margin-bottom: 8px;">До времени (исключая)</span><br>
+            <input type="time" name="endTime" value="${param.endTime}">
         </label>
         <div style="width: 100%">
             <input type="submit" value="Filter">
@@ -56,7 +56,7 @@
         </tr>
         </thead>
         <c:forEach items="${requestScope.meals}" var="meal">
-            <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.MealTo"/>
+            <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.to.MealTo"/>
             <tr class="${meal.excess ? 'excess' : 'normal'}">
                 <td>
                         <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>
