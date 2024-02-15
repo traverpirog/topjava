@@ -5,8 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +36,7 @@ public class InMemoryMealRepository implements MealRepository {
             return meal;
         }
         Meal foundedMeal = repository.get(meal.getId());
-        if (userId != foundedMeal.getUserId()) {
+        if (foundedMeal == null || userId != foundedMeal.getUserId()) {
             return null;
         }
         // handle case: update, but not present in storage
@@ -68,6 +71,17 @@ public class InMemoryMealRepository implements MealRepository {
         log.info("getAll");
         return repository.values().stream()
                 .filter(meal -> meal.getUserId() == userId)
+                .sorted(Comparator.comparing(Meal::getDateTime, Comparator.reverseOrder()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Meal> getAllByDateTime(int userId, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+        log.info("getAllByDateTime");
+        return repository.values().stream().filter(meal -> meal.getUserId() == userId &&
+                        DateTimeUtil.isBetweenHalfOpen(meal.getDate(), startDate, endDate) &&
+                        DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime)
+                )
                 .sorted(Comparator.comparing(Meal::getDateTime, Comparator.reverseOrder()))
                 .collect(Collectors.toList());
     }
