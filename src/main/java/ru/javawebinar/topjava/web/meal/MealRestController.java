@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.to.MealTo;
+import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
@@ -32,7 +32,7 @@ public class MealRestController {
     }
 
     public List<MealTo> getAllByDateTime(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
-        log.info("getAll");
+        log.info("getAllByDateTime");
         if (startDate == null) {
             startDate = LocalDate.MIN;
         }
@@ -46,8 +46,6 @@ public class MealRestController {
         }
         if (endTime == null) {
             endTime = LocalTime.MAX;
-        } else {
-            endTime = endTime.minusMinutes(1);
         }
         return MealsUtil.getFilteredTos(service.getAll(authUserId()), SecurityUtil.authUserCaloriesPerDay(), startDate, startTime, endDate, endTime);
     }
@@ -66,8 +64,7 @@ public class MealRestController {
     public void update(Meal meal, int id) {
         log.info("update {}", id);
         assureIdConsistent(meal, id);
-        Meal foundedMeal = get(id);
-        service.update(foundedMeal, authUserId());
+        service.update(meal, authUserId());
     }
 
     public void delete(int id) {

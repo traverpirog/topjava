@@ -10,11 +10,14 @@
     <li><a href="users">Users</a></li>
     <li><a href="meals">Meals</a></li>
 </ul>
-<form action="users">
-    <select name="users">
-        <option value="1">User 1</option>
-        <option value="2">User 2</option>
-    </select>
+<form action="users" method="post">
+    <label>
+        <span>Select user:</span>
+        <select name="users">
+            <option value="1">User 1</option>
+            <option value="2">User 2</option>
+        </select>
+    </label>
     <input type="submit" value="Submit">
 </form>
 </body>

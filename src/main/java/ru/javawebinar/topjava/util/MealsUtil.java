@@ -1,7 +1,7 @@
 package ru.javawebinar.topjava.util;
 
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.to.MealTo;
+import ru.javawebinar.topjava.to.MealTo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,7 +36,10 @@ public class MealsUtil {
     }
 
     public static List<MealTo> getFilteredTos(Collection<Meal> meals, int caloriesPerDay, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
-        return filterByPredicate(meals, caloriesPerDay, meal -> DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime) && DateTimeUtil.isBetweenHalfOpen(meal.getDate(), startDate, endDate));
+        return filterByPredicate(meals, caloriesPerDay, meal ->
+                DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime) &&
+                        DateTimeUtil.isBetweenHalfOpen(meal.getDate(), startDate, endDate)
+        );
     }
 
     private static List<MealTo> filterByPredicate(Collection<Meal> meals, int caloriesPerDay, Predicate<Meal> filter) {

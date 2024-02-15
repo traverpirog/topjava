@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.util.StringUtils;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
@@ -79,22 +80,10 @@ public class MealServlet extends HttpServlet {
                 String requestStartTime = request.getParameter("startTime");
                 String requestEndDate = request.getParameter("endDate");
                 String requestEndTime = request.getParameter("endTime");
-                LocalDate startDate = null;
-                LocalTime startTime = null;
-                LocalDate endDate = null;
-                LocalTime endTime = null;
-                if (requestStartDate != null && !requestStartDate.isEmpty()) {
-                    startDate = LocalDate.parse(requestStartDate);
-                }
-                if (requestStartTime != null && !requestStartTime.isEmpty()) {
-                    startTime = LocalTime.parse(requestStartTime);
-                }
-                if (requestEndDate != null && !requestEndDate.isEmpty()) {
-                    endDate = LocalDate.parse(requestEndDate);
-                }
-                if (requestEndTime != null && !requestEndTime.isEmpty()) {
-                    endTime = LocalTime.parse(requestEndTime);
-                }
+                LocalDate startDate = StringUtils.hasLength(requestStartDate) ? LocalDate.parse(requestStartDate) : null;
+                LocalTime startTime = StringUtils.hasLength(requestStartTime) ? LocalTime.parse(requestStartTime) : null;
+                LocalDate endDate = StringUtils.hasLength(requestEndDate) ? LocalDate.parse(requestEndDate) : null;
+                LocalTime endTime = StringUtils.hasLength(requestEndTime) ? LocalTime.parse(requestEndTime) : null;
                 request.setAttribute("meals", controller.getAllByDateTime(startDate, startTime, endDate, endTime));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
