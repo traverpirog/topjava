@@ -9,12 +9,12 @@ import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Repository
@@ -69,19 +69,20 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public List<Meal> getAll(int userId) {
         log.info("getAll");
-        return repository.values().stream()
-                .filter(meal -> meal.getUserId() == userId)
-                .sorted(Comparator.comparing(Meal::getDateTime, Comparator.reverseOrder()))
-                .collect(Collectors.toList());
+        return getAllFiltered(meal -> userId == meal.getUserId());
     }
 
     @Override
-    public List<Meal> getAllByDateTime(int userId, LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+    public List<Meal> getAllByDateTime(int userId, LocalDate startDate, LocalDate endDate) {
         log.info("getAllByDateTime");
-        return repository.values().stream().filter(meal -> meal.getUserId() == userId &&
-                        DateTimeUtil.isBetweenHalfOpen(meal.getDate(), startDate, endDate) &&
-                        DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime)
-                )
+        return getAllFiltered(meal -> userId == meal.getUserId() &&
+                DateTimeUtil.isBetweenHalfOpen(meal.getDate(), startDate, endDate)
+        );
+    }
+
+    private List<Meal> getAllFiltered(Predicate<Meal> filter) {
+        return repository.values().stream()
+                .filter(filter)
                 .sorted(Comparator.comparing(Meal::getDateTime, Comparator.reverseOrder()))
                 .collect(Collectors.toList());
     }

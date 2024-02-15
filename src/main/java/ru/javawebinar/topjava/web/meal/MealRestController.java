@@ -47,7 +47,8 @@ public class MealRestController {
         if (endTime == null) {
             endTime = LocalTime.MAX;
         }
-        return MealsUtil.getTos(service.getAllByDate(authUserId(), startDate, startTime, endDate, endTime), SecurityUtil.authUserCaloriesPerDay());
+        return MealsUtil.getFilteredTos(service.getAllByDateTime(authUserId(), startDate, endDate),
+                SecurityUtil.authUserCaloriesPerDay(), startTime, endTime);
     }
 
     public Meal get(int id) {
