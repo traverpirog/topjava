@@ -20,9 +20,9 @@ CREATE UNIQUE INDEX users_unique_email_idx ON users (email);
 CREATE TABLE meals
 (
     id               INTEGER PRIMARY KEY DEFAULT nextval('global_seq'),
-    datetime         TIMESTAMP                         NOT NULL,
-    description      VARCHAR                           NOT NULL,
-    calories         INTEGER             DEFAULT 0     NOT NULL,
+    datetime         TIMESTAMP                                       NOT NULL,
+    description      VARCHAR                                         NOT NULL,
+    calories         INTEGER                                         NOT NULL,
     user_id          INTEGER REFERENCES  users(id) ON DELETE CASCADE NOT NULL,
     CONSTRAINT datetime_user_unique UNIQUE (datetime, user_id)
 );

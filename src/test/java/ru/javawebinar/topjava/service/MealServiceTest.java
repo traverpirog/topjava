@@ -64,15 +64,20 @@ public class MealServiceTest {
     }
 
     @Test
+    public void deletedNotAccess() {
+        assertThrows(NotFoundException.class, () -> service.delete(MEAL_ID_NOT_FOUND, ADMIN_ID));
+    }
+
+    @Test
     public void getBetweenInclusive() {
-        List<Meal> meals = service.getBetweenInclusive(LOCAL_DATE, null, USER_ID);
-        assertMatch(meals, meal_3, meal_2, meal);
+        List<Meal> meals = service.getBetweenInclusive(START_LOCAL_DATE, END_LOCAL_DATE, USER_ID);
+        assertMatch(meals, meal_3, meal_2, meal, meal_6, meal_5, meal_4);
     }
 
     @Test
     public void getAll() {
         List<Meal> meals = service.getAll(USER_ID);
-        assertMatch(meals, meal_3, meal_2, meal, meal_6, meal_5, meal_4);
+        assertMatch(meals, meal_3, meal_2, meal, meal_6, meal_5, meal_4, meal_9, meal_8, meal_7);
     }
 
     @Test
@@ -101,7 +106,7 @@ public class MealServiceTest {
     @Test
     public void duplicateDateTimeCreate() {
         Meal newMeal = getNew();
-        newMeal.setDateTime(LOCAL_DATE_TIME);
+        newMeal.setDateTime(meal.getDateTime());
         assertThrows(DataAccessException.class, () -> service.create(newMeal, USER_ID));
     }
 }
