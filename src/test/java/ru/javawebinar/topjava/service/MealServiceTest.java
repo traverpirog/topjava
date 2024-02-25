@@ -1,7 +1,12 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.Ignore;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExternalResource;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -12,8 +17,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -26,8 +35,39 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-@Ignore
 public class MealServiceTest {
+    private static final List<String> watchedLog = new ArrayList<>();
+    @Rule
+    public final TestRule watchman = new TestWatcher() {
+        private Instant start;
+        private Instant end;
+
+        @Override
+        protected void starting(Description description) {
+            start = Instant.now();
+        }
+
+        @Override
+        protected void finished(Description description) {
+            end = Instant.now();
+            Duration diff = Duration.between(start, end);
+            String message = "Test for " + description.getMethodName() + " - " + diff.toMillis() + "ms";
+            System.out.println(message);
+            watchedLog.add(message);
+        }
+    };
+
+    @ClassRule
+    public static final ExternalResource resource = new ExternalResource() {
+        @Override
+        protected void after() {
+            System.out.println("--------------------");
+            for (String message : watchedLog) {
+                System.out.println(message + "\n");
+            }
+            System.out.println("--------------------");
+        }
+    };
 
     @Autowired
     private MealService service;

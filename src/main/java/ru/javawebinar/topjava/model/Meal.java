@@ -1,19 +1,38 @@
 package ru.javawebinar.topjava.model;
 
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@Entity
+@NamedQueries({
+        @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id=:user_id"),
+        @NamedQuery(name = Meal.FIND_ALL, query = "FROM Meal m WHERE m.user.id=:user_id ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.BY_ID, query = "FROM Meal m WHERE m.id=:id AND m.user.id=:user_id"),
+        @NamedQuery(name = Meal.BY_DATE_TIME, query = "FROM Meal m WHERE m.dateTime>=:startTime AND m.dateTime<:endTime AND m.user.id=:user_id ORDER BY m.dateTime DESC"),
+        @NamedQuery(name = Meal.UPDATE, query = "UPDATE Meal m SET m.description=:description, m.calories=:calories, m.dateTime=:date_time WHERE m.id=:id AND m.user.id=:user_id")
+})
+@Table(name = "meal", uniqueConstraints = @UniqueConstraint(name = "meal_unique_user_datetime_idx", columnNames = {"date_time", "user_id"}))
 public class Meal extends AbstractBaseEntity {
+    public static final String DELETE = "Meal.delete";
+    public static final String FIND_ALL = "Meal.findAll";
+    public static final String BY_ID = "Meal.findById";
+    public static final String BY_DATE_TIME = "Meal.findByDateTime";
+    public static final String UPDATE = "Meal.update";
+    @NotNull
+    @Column(name = "date_time", nullable = false)
     private LocalDateTime dateTime;
-
+    @NotBlank
+    @Column(name = "description", nullable = false)
     private String description;
-
+    @NotNull
+    @Column(name = "calories", nullable = false)
     private int calories;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
     public Meal() {
