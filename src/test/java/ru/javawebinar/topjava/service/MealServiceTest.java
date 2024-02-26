@@ -4,8 +4,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExternalResource;
-import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
+import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -19,12 +18,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -50,20 +48,10 @@ public class MealServiceTest {
     };
 
     @Rule
-    public final TestRule watchman = new TestWatcher() {
-        private Instant start;
-        private Instant end;
-
+    public final Stopwatch stopwatch = new Stopwatch() {
         @Override
-        protected void starting(Description description) {
-            start = Instant.now();
-        }
-
-        @Override
-        protected void finished(Description description) {
-            end = Instant.now();
-            Duration diff = Duration.between(start, end);
-            String message = String.format("%-30s %d ms", description.getMethodName(), diff.toMillis());
+        protected void finished(long nanos, Description description) {
+            String message = String.format("%-30s %7d ms", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
             log.info(message);
             watchedLog.add(message);
         }
