@@ -8,6 +8,8 @@ import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,7 +38,17 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
+    private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
     private static final List<String> watchedLog = new ArrayList<>();
+
+    @ClassRule
+    public static final ExternalResource resource = new ExternalResource() {
+        @Override
+        protected void after() {
+            log.info(String.join("\n", watchedLog));
+        }
+    };
+
     @Rule
     public final TestRule watchman = new TestWatcher() {
         private Instant start;
@@ -51,21 +63,9 @@ public class MealServiceTest {
         protected void finished(Description description) {
             end = Instant.now();
             Duration diff = Duration.between(start, end);
-            String message = "Test for " + description.getMethodName() + " - " + diff.toMillis() + "ms";
-            System.out.println(message);
+            String message = String.format("%-30s %d ms", description.getMethodName(), diff.toMillis());
+            log.info(message);
             watchedLog.add(message);
-        }
-    };
-
-    @ClassRule
-    public static final ExternalResource resource = new ExternalResource() {
-        @Override
-        protected void after() {
-            System.out.println("--------------------");
-            for (String message : watchedLog) {
-                System.out.println(message + "\n");
-            }
-            System.out.println("--------------------");
         }
     };
 
